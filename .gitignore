@@ -9,5 +9,6 @@ examples/*/*
 #!examples/*/.env
 !examples/*/.mautic_env
 !examples/*/docker-compose.yml
+!examples/*/Dockerfile
 
 examples/basic/.env
