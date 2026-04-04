@@ -5,6 +5,8 @@ fpm/build.sh
 deploy-test-m3-apache.sh
 
 examples/*/*
-!examples/*/.env
+#!examples/*/.env
 !examples/*/.mautic_env
 !examples/*/docker-compose.yml
+
+examples/basic/.env_omri
