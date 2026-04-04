@@ -10,3 +10,4 @@ examples/*/*
 !examples/*/.mautic_env
 !examples/*/docker-compose.yml
 
+examples/basic/.env
