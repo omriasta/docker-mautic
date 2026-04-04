@@ -10,5 +10,6 @@ examples/*/*
 !examples/*/.mautic_env
 !examples/*/docker-compose.yml
 !examples/*/Dockerfile
+!examples/*/TwilioTransport.php
 
 examples/basic/.env
