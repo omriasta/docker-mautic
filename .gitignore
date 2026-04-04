@@ -3,11 +3,10 @@ test-m3-apache.yaml
 apache/build.sh
 fpm/build.sh
 deploy-test-m3-apache.sh
-
+examples/basic/.env_omri
+examples/basic/.env
 examples/*/*
 #!examples/*/.env
 !examples/*/.mautic_env
 !examples/*/docker-compose.yml
 
-examples/basic/.env_omri
-examples/basic/.env
