@@ -10,3 +10,4 @@ examples/*/*
 !examples/*/docker-compose.yml
 
 examples/basic/.env_omri
+examples/basic/.env
