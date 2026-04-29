@@ -1,4 +1,4 @@
-FROM mautic/mautic:7.0.1-apache
+FROM mautic/mautic:7.1.0-apache
 
 COPY ./themes /var/www/html/themes
 COPY ./farmhouse.css /var/www/html/docroot/app/assets/css/
