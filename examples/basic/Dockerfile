@@ -1,30 +1,32 @@
-FROM mautic/mautic:7.1.1-apache
+FROM mautic/mautic:7.1.2-apache
 
-COPY ./themes /var/www/html/themes
-COPY ./farmhouse.css /var/www/html/docroot/app/assets/css/
-COPY ./FarmhouseRegular.woff2 /var/www/html/docroot/app/assets/fonts/
-RUN apt -y install libavif15 
-RUN apt -y install libxpm4 
-RUN apt -y install nano
+# 1. System dependencies and Apache configuration
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libavif15 \
+    libxpm4 \
+    nano \
+    && rm -rf /var/lib/apt/lists/* \
+    && a2enmod remoteip
 
-RUN a2enmod remoteip
+# 2. Handle Composer dependencies and resolve Twilio SDK conflict using an Alias
+# This allows version 8.0.0 to satisfy requirements for version 5.x
+RUN composer require \
+    "twilio/sdk:8.0.0 as 5.42.2" \
+    EMRL/mautic-twilio-sms-bundle \
+    firemultimedia/mautic-multi-captcha-bundle \
+    --working-dir=/var/www/html --no-interaction --optimize-autoloader \
+    && php /var/www/html/bin/console mautic:marketplace:install etailors/mautic-amazon-ses \
+    && sed -i 's/builder, array $data, string $formArea/builder, $data, $formArea/g' /var/www/html/docroot/plugins/TwilioSmsBundle/Integration/TwilioIntegration.php \
+    && sed -i 's/private array $metadata,/private $metadata,/g' /var/www/html/docroot/app/bundles/PluginBundle/Event/PluginUpdateEvent.php
 
-#RUN sed -i "s|</VirtualHost>|<IfModule mod_remoteip.c>\n  RemoteIPHeader X-Forwarded-For\n  RemoteIPTrustedProxy 192.168.1.112 127.0.0.1\n</IfModule>\n</VirtualHost>|g" /etc/apache2/sites-available/000-default.conf
-
-RUN composer update --working-dir=/var/www/html/
-RUN composer require EMRL/mautic-twilio-sms-bundle --working-dir=/var/www/html
-RUN sed -i 's/builder, array $data, string $formArea/builder, $data, $formArea/g' /var/www/html/docroot/plugins/TwilioSmsBundle/Integration/TwilioIntegration.php
-RUN php /var/www/html/bin/console mautic:marketplace:install etailors/mautic-amazon-ses
-RUN composer require firemultimedia/mautic-multi-captcha-bundle --working-dir=/var/www/html
-RUN sed -i 's/"twilio\/sdk": "^5.25"/"twilio\/sdk": "^8.0.0"/g' /var/www/html/composer.lock
-RUN composer require twilio/sdk:8.0.0 --working-dir=/var/www/html
-RUN rm -r /var/www/html/var/cache/prod/*
-RUN php /var/www/html/bin/console cache:clear
-RUN sed -i 's/private array $metadata,/private $metadata,/g' /var/www/html/docroot/app/bundles/PluginBundle/Event/PluginUpdateEvent.php
-#RUN php /var/www/html/bin/console mautic:plugins:update
-#RUN sed -i 's/"twilio\/sdk": "^5.25"/"twilio\/sdk": "^8.0.0"/g' /var/www/html/composer.lock
-#RUN composer require twilio/sdk:8.0.0 --working-dir=/var/www/html
-#RUN composer require firemultimedia/mautic-multi-captcha-bundle --working-dir=/var/www/html
+# 3. Copy assets with correct ownership
+COPY --chown=www-data:www-data ./themes /var/www/html/themes
+COPY --chown=www-data:www-data ./farmhouse.css /var/www/html/docroot/app/assets/css/
+COPY --chown=www-data:www-data ./FarmhouseRegular.woff2 /var/www/html/docroot/app/assets/fonts/
 COPY ./TwilioTransport.php /var/www/html/docroot/app/bundles/SmsBundle/Integration/Twilio/TwilioTransport.php
-RUN chown -R www-data:www-data /var/www/html
-RUN cp /var/www/html/docroot/app/bundles/AssetBundle/Resources/views/Modules/preview.html.twig /var/www/html/docroot/app/bundles/AssetBundle/Resources/views/Asset/
+
+# 4. Finalize file system and clear cache
+RUN cp /var/www/html/docroot/app/bundles/AssetBundle/Resources/views/Modules/preview.html.twig /var/www/html/docroot/app/bundles/AssetBundle/Resources/views/Asset/ \
+    && rm -rf /var/www/html/var/cache/prod/* \
+    && php /var/www/html/bin/console cache:clear \
+    && chown -R www-data:www-data /var/www/html
