@@ -10,6 +10,10 @@ x-mautic-volumes:
 services:
   db:
     image: mysql:lts
+    deploy:
+      resources:
+        limits:
+          memory: 512M      # Hard limit (e.g., 512 Megabytes)    
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
@@ -28,6 +32,10 @@ services:
 
   mautic_web:
     image: my-mautic-image:latest
+    deploy:
+      resources:
+        limits:
+          memory: 512M      # Hard limit (e.g., 512 Megabytes)    
     links:
       - db:mysql
     ports:
@@ -52,6 +60,10 @@ services:
 
   mautic_cron:
     image: my-mautic-image:latest
+    deploy:
+      resources:
+        limits:
+          memory: 512M      # Hard limit (e.g., 512 Megabytes)    
     links:
       - db:mysql
     volumes: *mautic-volumes
@@ -67,6 +79,10 @@ services:
 
   mautic_worker:
     image: my-mautic-image:latest
+    deploy:
+      resources:
+        limits:
+          memory: 512M      # Hard limit (e.g., 512 Megabytes)    
     links:
       - db:mysql
     volumes: *mautic-volumes
