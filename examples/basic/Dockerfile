@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # This allows version 8.0.0 to satisfy requirements for version 5.x
 RUN composer require \
     "twilio/sdk:8.0.0 as 5.42.2" \
+    symfony/dom-crawler \
+    symfony/css-selector \
 #    EMRL/mautic-twilio-sms-bundle \
     firemultimedia/mautic-multi-captcha-bundle \
     --working-dir=/var/www/html --no-interaction --optimize-autoloader 
@@ -27,9 +29,10 @@ RUN composer require \
 #    && sed -i 's/private array $metadata,/private $metadata,/g' /var/www/html/docroot/app/bundles/PluginBundle/Event/PluginUpdateEvent.php
 
 # 3. Copy assets with correct ownership
-COPY --chown=www-data:www-data ./themes /var/www/html/themes
+#COPY --chown=www-data:www-data ./themes /var/www/html/themes
 COPY --chown=www-data:www-data ./farmhouse.css /var/www/html/docroot/app/assets/css/
 COPY --chown=www-data:www-data ./FarmhouseRegular.woff2 /var/www/html/docroot/app/assets/fonts/
+COPY --chown=www-data:www-data ./fix_grape.sh /var/www/html/
 #COPY ./TwilioTransport.php /var/www/html/docroot/app/bundles/SmsBundle/Integration/Twilio/TwilioTransport.php
 
 # 4. Finalize file system and clear cache
