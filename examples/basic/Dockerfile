@@ -17,6 +17,8 @@ RUN composer require \
 #    EMRL/mautic-twilio-sms-bundle \
     firemultimedia/mautic-multi-captcha-bundle \
     --working-dir=/var/www/html --no-interaction --optimize-autoloader 
+RUN composer update \
+    --working-dir=/var/www/html --no-interaction --optimize-autoloader     
     RUN php /var/www/html/bin/console mautic:marketplace:install etailors/mautic-amazon-ses 
     RUN sed -i "s|mautic.helper.encryption|mautic.multicaptcha.helper.encryption|g" /var/www/html/docroot/plugins/MauticMultiCaptchaBundle/Config/config.php 
     RUN sed -i '/use Mautic\\CoreBundle\\DependencyInjection\\MauticCoreExtension;/a\\use Mautic\\CoreBundle\\Helper\\EncryptionHelper;' /var/www/html/docroot/plugins/MauticMultiCaptchaBundle/Config/services.php 
