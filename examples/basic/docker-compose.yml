@@ -5,6 +5,7 @@ x-mautic-volumes:
   - ./mautic/media/files:/var/www/html/docroot/media/files:z
   - ./mautic/media/images:/var/www/html/docroot/media/images:z
   - ./mautic/media/themes:/var/www/html/docroot/themes:z
+  - ./favicon.ico:/var/www/html/docroot/app/assets/images/favicon.ico
 #  - ./cron:/opt/mautic/cron:z # Uncomment this line to customize your cron configuration
 
 services:
