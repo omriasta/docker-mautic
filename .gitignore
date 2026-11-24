@@ -11,5 +11,6 @@ examples/*/*
 !examples/*/docker-compose.yml
 !examples/*/Dockerfile
 !examples/*/TwilioTransport.php
-
+!examples/*/cron/
+!examples/*/cron/*
 examples/basic/.env
