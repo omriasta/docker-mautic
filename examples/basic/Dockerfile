@@ -1,4 +1,4 @@
-FROM mautic/mautic:7.2.2-apache
+FROM mautic/mautic:7.2.3-apache
 
 # 1. System dependencies and Apache configuration
 RUN apt-get update && apt-get install -y --no-install-recommends \
